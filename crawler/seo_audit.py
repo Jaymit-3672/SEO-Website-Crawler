@@ -1,7 +1,6 @@
 """
-seo_audit.py
-
-Phase 3 SEO Audit Engine
+SEO Audit Engine
+Phase 4
 """
 
 from collections import Counter
@@ -9,48 +8,50 @@ from collections import Counter
 
 def audit_seo(results):
 
-    summary = {
+    audit = {
         "total_pages": len(results),
         "missing_titles": [],
         "missing_meta": [],
         "missing_h1": [],
         "duplicate_titles": [],
-        "duplicate_meta": []
+        "duplicate_meta": [],
+        "seo_score": 100,
+        "recommendations": []
     }
 
-    # -----------------------------
+    # ------------------
     # Missing Checks
-    # -----------------------------
+    # ------------------
 
     for page in results:
 
-        if (
-            not page["title"]
-            or page["title"] == "Missing"
-        ):
-            summary["missing_titles"].append(
+        if page["title"] == "Missing":
+
+            audit["missing_titles"].append(
                 page["url"]
             )
 
-        if (
-            not page["meta_description"]
-            or page["meta_description"] == "Missing"
-        ):
-            summary["missing_meta"].append(
+            audit["seo_score"] -= 10
+
+        if page["meta_description"] == "Missing":
+
+            audit["missing_meta"].append(
                 page["url"]
             )
 
-        if (
-            not page["h1"]
-            or page["h1"] == "Missing"
-        ):
-            summary["missing_h1"].append(
+            audit["seo_score"] -= 5
+
+        if page["h1"] == "Missing":
+
+            audit["missing_h1"].append(
                 page["url"]
             )
 
-    # -----------------------------
+            audit["seo_score"] -= 5
+
+    # ------------------
     # Duplicate Titles
-    # -----------------------------
+    # ------------------
 
     title_counter = Counter()
 
@@ -59,20 +60,25 @@ def audit_seo(results):
         title = page["title"]
 
         if title != "Missing":
+
             title_counter[title] += 1
 
-    duplicate_titles = [
-        title
-        for title, count
-        in title_counter.items()
-        if count > 1
-    ]
+    for title, count in title_counter.items():
 
-    summary["duplicate_titles"] = duplicate_titles
+        if count > 1:
 
-    # -----------------------------
+            audit["duplicate_titles"].append(
+                {
+                    "title": title,
+                    "count": count
+                }
+            )
+
+            audit["seo_score"] -= 8
+
+    # ------------------
     # Duplicate Meta
-    # -----------------------------
+    # ------------------
 
     meta_counter = Counter()
 
@@ -81,15 +87,62 @@ def audit_seo(results):
         meta = page["meta_description"]
 
         if meta != "Missing":
+
             meta_counter[meta] += 1
 
-    duplicate_meta = [
-        meta
-        for meta, count
-        in meta_counter.items()
-        if count > 1
-    ]
+    for meta, count in meta_counter.items():
 
-    summary["duplicate_meta"] = duplicate_meta
+        if count > 1:
 
-    return summary
+            audit["duplicate_meta"].append(
+                {
+                    "meta": meta,
+                    "count": count
+                }
+            )
+
+            audit["seo_score"] -= 5
+
+    # ------------------
+    # Score Floor
+    # ------------------
+
+    if audit["seo_score"] < 0:
+
+        audit["seo_score"] = 0
+
+    # ------------------
+    # Recommendations
+    # ------------------
+
+    if audit["missing_titles"]:
+
+        audit["recommendations"].append(
+            f"Add titles to {len(audit['missing_titles'])} pages"
+        )
+
+    if audit["missing_meta"]:
+
+        audit["recommendations"].append(
+            f"Add meta descriptions to {len(audit['missing_meta'])} pages"
+        )
+
+    if audit["missing_h1"]:
+
+        audit["recommendations"].append(
+            f"Add H1 tags to {len(audit['missing_h1'])} pages"
+        )
+
+    if audit["duplicate_titles"]:
+
+        audit["recommendations"].append(
+            "Resolve duplicate page titles"
+        )
+
+    if audit["duplicate_meta"]:
+
+        audit["recommendations"].append(
+            "Resolve duplicate meta descriptions"
+        )
+
+    return audit

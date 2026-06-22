@@ -6,78 +6,143 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SEO Audit Results</title>
+<title>SEO Audit Dashboard</title>
 
 <style>
 
-body{
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
     font-family:Arial,sans-serif;
-    background:#f8fafc;
+}
+
+body{
+    background:#f1f5f9;
     padding:30px;
 }
 
-h1{
-    margin-bottom:20px;
+/* Header */
+
+.header{
+    margin-bottom:30px;
 }
 
-.summary-grid{
+.header h1{
+    font-size:40px;
+}
+
+.header p{
+    color:#666;
+}
+
+/* Score Card */
+
+.score-card{
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.score{
+    font-size:60px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.progress{
+    width:100%;
+    height:18px;
+    background:#e5e7eb;
+    border-radius:20px;
+    margin-top:15px;
+}
+
+.progress-fill{
+    height:100%;
+    background:#22c55e;
+    border-radius:20px;
+}
+
+/* Summary Cards */
+
+.grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
+    gap:20px;
     margin-bottom:30px;
 }
 
 .card{
     background:white;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
 }
 
 .card h3{
-    margin-bottom:10px;
     color:#2563eb;
+    margin-bottom:15px;
 }
 
 .card p{
-    font-size:24px;
+    font-size:28px;
     font-weight:bold;
 }
+
+/* Severity */
+
+.critical{
+    border-left:6px solid red;
+}
+
+.warning{
+    border-left:6px solid orange;
+}
+
+.passed{
+    border-left:6px solid green;
+}
+
+/* Recommendations */
+
+.recommendations{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:30px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.recommendations ul{
+    margin-top:10px;
+    margin-left:20px;
+}
+
+/* Table */
 
 table{
     width:100%;
     border-collapse:collapse;
     background:white;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
 }
 
 th{
     background:#2563eb;
     color:white;
-    padding:12px;
+    padding:14px;
 }
 
 td{
-    padding:10px;
+    padding:12px;
     border-bottom:1px solid #eee;
 }
 
 tr:hover{
-    background:#f1f5f9;
-}
-
-.section{
-    margin-top:40px;
-}
-
-.back-btn{
-    display:inline-block;
-    margin-top:25px;
-    text-decoration:none;
-    background:#2563eb;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
+    background:#f8fafc;
 }
 
 .status-success{
@@ -90,11 +155,25 @@ tr:hover{
     font-weight:bold;
 }
 
-ul{
+.section{
+    margin-top:40px;
+}
+
+.box{
     background:white;
     padding:20px;
+    border-radius:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.back-btn{
+    display:inline-block;
+    margin-top:30px;
+    background:#2563eb;
+    color:white;
+    text-decoration:none;
+    padding:12px 20px;
     border-radius:10px;
-    box-shadow:0 3px 10px rgba(0,0,0,.08);
 }
 
 </style>
@@ -103,54 +182,110 @@ ul{
 
 <body>
 
+<div class="header">
+
 <h1>SEO Audit Dashboard</h1>
 
-<div class="summary-grid">
-
-    <div class="card">
-        <h3>Total Pages</h3>
-        <p>{{ audit.total_pages }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Missing Titles</h3>
-        <p>{{ audit.missing_titles|length }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Missing Meta</h3>
-        <p>{{ audit.missing_meta|length }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Missing H1</h3>
-        <p>{{ audit.missing_h1|length }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Duplicate Titles</h3>
-        <p>{{ audit.duplicate_titles|length }}</p>
-    </div>
-
-    <div class="card">
-        <h3>Duplicate Meta</h3>
-        <p>{{ audit.duplicate_meta|length }}</p>
-    </div>
+<p>
+Technical SEO Website Crawler
+</p>
 
 </div>
+
+<!-- SEO SCORE -->
+
+<div class="score-card">
+
+<h2>SEO Score</h2>
+
+<div class="score">
+
+{{ audit.seo_score }}/100
+
+</div>
+
+<div class="progress">
+
+<div
+class="progress-fill"
+style="width:{{ audit.seo_score }}%;"
+>
+</div>
+
+</div>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="grid">
+
+<div class="card">
+<h3>Total Pages</h3>
+<p>{{ audit.total_pages }}</p>
+</div>
+
+<div class="card critical">
+<h3>Missing Titles</h3>
+<p>{{ audit.missing_titles|length }}</p>
+</div>
+
+<div class="card warning">
+<h3>Missing Meta</h3>
+<p>{{ audit.missing_meta|length }}</p>
+</div>
+
+<div class="card warning">
+<h3>Missing H1</h3>
+<p>{{ audit.missing_h1|length }}</p>
+</div>
+
+<div class="card passed">
+<h3>Duplicate Titles</h3>
+<p>{{ audit.duplicate_titles|length }}</p>
+</div>
+
+<div class="card passed">
+<h3>Duplicate Meta</h3>
+<p>{{ audit.duplicate_meta|length }}</p>
+</div>
+
+</div>
+
+<!-- RECOMMENDATIONS -->
+
+<div class="recommendations">
+
+<h2>SEO Recommendations</h2>
+
+<ul>
+
+{% for item in audit.recommendations %}
+
+<li>{{ item }}</li>
+
+{% endfor %}
+
+</ul>
+
+</div>
+
+<!-- TABLE -->
 
 <div class="section">
 
 <h2>Crawl Results</h2>
 
+<br>
+
 <table>
 
 <tr>
-    <th>URL</th>
-    <th>Status</th>
-    <th>Title</th>
-    <th>Meta Description</th>
-    <th>H1</th>
+<th>URL</th>
+<th>Status</th>
+<th>Title</th>
+<th>Meta Description</th>
+<th>H1</th>
 </tr>
 
 {% for page in results %}
@@ -162,11 +297,17 @@ ul{
 <td>
 
 {% if page.status_code == 200 %}
-<span class="status-success">200</span>
+
+<span class="status-success">
+{{ page.status_code }}
+</span>
+
 {% else %}
+
 <span class="status-error">
 {{ page.status_code }}
 </span>
+
 {% endif %}
 
 </td>
@@ -185,17 +326,26 @@ ul{
 
 </div>
 
+<!-- DUPLICATE TITLES -->
+
 <div class="section">
 
 <h2>Duplicate Titles</h2>
+
+<br>
+
+<div class="box">
 
 <ul>
 
 {% for item in audit.duplicate_titles %}
 
 <li>
+
 {{ item.title }}
+
 (Found {{ item.count }} times)
+
 </li>
 
 {% endfor %}
@@ -204,17 +354,28 @@ ul{
 
 </div>
 
+</div>
+
+<!-- DUPLICATE META -->
+
 <div class="section">
 
 <h2>Duplicate Meta Descriptions</h2>
+
+<br>
+
+<div class="box">
 
 <ul>
 
 {% for item in audit.duplicate_meta %}
 
 <li>
+
 {{ item.meta }}
+
 (Found {{ item.count }} times)
+
 </li>
 
 {% endfor %}
@@ -223,8 +384,12 @@ ul{
 
 </div>
 
+</div>
+
 <a href="/" class="back-btn">
-    New Crawl
+
+New Crawl
+
 </a>
 
 </body>

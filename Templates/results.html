@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+</head>
+<body>
+
+<h1>Crawl Results</h1>
+
+<table border="1" cellpadding="10">
+
+<tr>
+    <th>Field</th>
+    <th>Value</th>
+</tr>
+
+<tr>
+    <td>URL</td>
+    <td>{{ result.url }}</td>
+</tr>
+
+<tr>
+    <td>Status Code</td>
+    <td>{{ result.status_code }}</td>
+</tr>
+
+<tr>
+    <td>Title</td>
+    <td>{{ result.title }}</td>
+</tr>
+
+<tr>
+    <td>Meta Description</td>
+    <td>{{ result.meta_description }}</td>
+</tr>
+
+<tr>
+    <td>H1</td>
+    <td>{{ result.h1 }}</td>
+</tr>
+
+</table>
+
+<br>
+
+<a href="/">Back</a>
+
+</body>
+</html>
